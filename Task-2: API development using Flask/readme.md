@@ -2,6 +2,13 @@
 
 This is a Flask-based web application that allows users to manage tasks and notes effectively. The application includes user authentication, task management features like setting priorities and due dates, filters for viewing tasks, and a comprehensive notes section with CRUD functionality and search capabilities.
 
+## Table of Contents
+
+1. [Feautes](#features)
+2. [Installation and Setup](#installation-and-setup)
+3. [Usage](#usage)
+4. [Outputs](#outputs)
+
 ## Features
 
 ### Authentication
