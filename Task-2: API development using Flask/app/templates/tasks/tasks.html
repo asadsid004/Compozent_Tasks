@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Header -->
+    <h1 class="text-3xl font-bold text-gray-900 mt-10 mb-8">Hello, {{ current_user.username }} 👋</h1>
+
+    <!-- Priority Statistics -->
+    <div class="mb-6 grid grid-cols-4 gap-4">
+        {% for priority in priority_levels %}
+        <div class="bg-white rounded-lg shadow-sm p-4 border-l-4 
+            {% if priority.value == 'urgent' %}border-red-500{% endif %}
+            {% if priority.value == 'high' %}border-orange-500{% endif %}
+            {% if priority.value == 'medium' %}border-blue-500{% endif %}
+            {% if priority.value == 'low' %}border-green-500{% endif %}">
+            <div class="text-sm text-gray-600 capitalize">{{ priority.value }}</div>
+            <div class="text-2xl font-bold">{{ priority_counts[priority.value] }}</div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Filtering and Sorting Controls -->
+    <div class="mb-6 bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+        <form method="GET" action="{{ url_for('tasks.filter_tasks') }}" class="flex gap-4 items-center">
+            <div>
+                <label class="text-sm text-gray-600">Priority:</label>
+                <select name="priority" class="ml-2 border-gray-300 rounded-md text-sm" onchange="this.form.submit()">
+                    <option value="">All</option>
+                    {% for priority in priority_levels %}
+                    <option value="{{ priority.value }}" {% if current_priority==priority.value %}selected{% endif %}>
+                        {{ priority.value|title }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label class="text-sm text-gray-600">Sort by:</label>
+                <select name="sort_by" class="ml-2 border-gray-300 rounded-md text-sm" onchange="this.form.submit()">
+                    <option value="due_date" {% if current_sort=='due_date' %}selected{% endif %}>Due Date</option>
+                    <option value="priority" {% if current_sort=='priority' %}selected{% endif %}>Priority</option>
+                    <option value="title" {% if current_sort=='title' %}selected{% endif %}>Title</option>
+                </select>
+            </div>
+            <div>
+                <label class="text-sm text-gray-600">Order:</label>
+                <select name="order" class="ml-2 border-gray-300 rounded-md text-sm" onchange="this.form.submit()">
+                    <option value="asc" {% if current_order=='asc' %}selected{% endif %}>Ascending</option>
+                    <option value="desc" {% if current_order=='desc' %}selected{% endif %}>Descending</option>
+                </select>
+            </div>
+        </form>
+    </div>
+
+    <!-- Add Task Form -->
+    <form method="POST" action="/tasks" class="mb-8 bg-white rounded-xl shadow-sm border border-gray-200">
+        <div class="p-4">
+            <input type="text" name="title" placeholder="Add task title" class="mb-4 input-primary" required />
+            <textarea name="description" placeholder="Task Description" class="mb-4 input-primary"></textarea>
+            <div class="flex gap-6 mb-6">
+                <div>
+                    <label for="due_date" class="text-sm text-gray-600">Due: </label>
+                    <input type="date" name="due_date" class="border-0 focus:ring-0 text-gray-600 cursor-pointer"
+                        required />
+                </div>
+                <div>
+                    <label for="priority" class="text-sm text-gray-600">Priority: </label>
+                    <select name="priority" class="border-gray-300 rounded-md">
+                        {% for priority in priority_levels %}
+                        <option value="{{ priority.value }}" {% if priority.value=='medium' %}selected{% endif %}>
+                            {{ priority.value|title }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <button type="submit" class="btn-primary">Add Task</button>
+        </div>
+    </form>
+
+    <h3 class="text-lg font-bold text-gray-800 mb-4">Upcoming Tasks</h3>
+    <ul class="space-y-4">
+        {% for task in upcoming_tasks %}
+        <li class="p-4 rounded-lg shadow-md border-l-4
+            {% if task.due_date < now %}bg-red-50{% elif (task.due_date - now).days <= 2 %}bg-orange-50{% else %}bg-green-50{% endif %}
+            {% if task.priority.value == 'urgent' %}border-red-500{% endif %}
+            {% if task.priority.value == 'high' %}border-orange-500{% endif %}
+            {% if task.priority.value == 'medium' %}border-blue-500{% endif %}
+            {% if task.priority.value == 'low' %}border-green-500{% endif %}">
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-lg font-bold">{{ task.title }}</h3>
+                        <span class="text-xs px-2 py-1 rounded-full 
+                            {% if task.priority.value == 'urgent' %}bg-red-100 text-red-800{% endif %}
+                            {% if task.priority.value == 'high' %}bg-orange-100 text-orange-800{% endif %}
+                            {% if task.priority.value == 'medium' %}bg-blue-100 text-blue-800{% endif %}
+                            {% if task.priority.value == 'low' %}bg-green-100 text-green-800{% endif %}">
+                            {{ task.priority.value|title }}
+                        </span>
+                    </div>
+                    <p class="text-sm">Due: {{ task.due_date.strftime('%B %d, %Y') }}</p>
+                    <p class="text-sm text-gray-600">{{ task.description }}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- Priority Update -->
+                    <form method="POST" action="/tasks/{{ task.id }}/priority" class="mr-2">
+                        <select name="priority" class="text-sm border-gray-300 rounded-md"
+                            onchange="this.form.submit()">
+                            {% for priority in priority_levels %}
+                            <option value="{{ priority.value }}" {% if task.priority.value==priority.value %}selected{%
+                                endif %}>
+                                {{ priority.value|title }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </form>
+                    <!-- Checkbox for Mark as Completed -->
+                    <form method="POST" action="/tasks/{{ task.id }}/toggle">
+                        <input type="checkbox" name="completed" class="text-xl" onchange="this.form.submit()" {% if
+                            task.status=='completed' %}checked{% endif %}>
+                    </form>
+                    <!-- Delete Button -->
+                    <form method="POST" action="/tasks/{{ task.id }}/delete">
+                        <button type="submit" class="text-red-500">🗑</button>
+                    </form>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- Completed Tasks -->
+    <h3 class="text-lg font-bold text-gray-800 mt-6 mb-4">Completed Tasks</h3>
+    <ul class="space-y-4 mb-10">
+        {% for task in completed_tasks %}
+        <li class="p-4 rounded-lg shadow-md bg-gray-50 border-l-4 border-gray-300">
+            <div class="flex justify-between items-center">
+                <div>
+                    <div class="flex items-center gap-2 mb-1">
+                        <h3 class="text-lg font-bold text-gray-600">{{ task.title }}</h3>
+                        <span class="text-xs px-2 py-1 rounded-full bg-gray-200 text-gray-600">
+                            {{ task.priority.value|title }}
+                        </span>
+                    </div>
+                    <p class="text-sm text-gray-500">Due: {{ task.due_date.strftime('%B %d, %Y') }}</p>
+                    <p class="text-sm text-gray-500">{{ task.description }}</p>
+                </div>
+                <div class="flex items-center gap-3">
+                    <!-- Checkbox for Mark as Pending -->
+                    <form method="POST" action="/tasks/{{ task.id }}/toggle">
+                        <input type="checkbox" name="completed" onchange="this.form.submit()" {% if
+                            task.status=='completed' %}checked{% endif %}>
+                    </form>
+                    <!-- Delete Button -->
+                    <form method="POST" action="/tasks/{{ task.id }}/delete">
+                        <button type="submit" class="text-red-500">🗑</button>
+                    </form>
+                </div>
+            </div>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
+{% endblock %}

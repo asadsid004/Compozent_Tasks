@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-center text-3xl font-bold pt-32">Login</h1>
+<p class="text-center text-sm">
+    Don't have an account? <a href="/register">Register</a>
+</p>
+<div class="pt-5">
+    <form class="max-w-sm mx-auto text-lg" method="post" action="{{ url_for('auth.login') }}">
+        <div class="mb-5">
+            <label for="email" class="block mb-2 font-medium text-gray-900">Your email</label>
+            <input type="email" name="email" id="email" class="input-primary" placeholder="name@flowbite.com"
+                required />
+        </div>
+        <div class="mb-5">
+            <label for="password" class="block mb-2 font-medium text-gray-900">Your password</label>
+            <input type="password" name="password" id="password" placeholder="password" class="input-primary"
+                required />
+        </div>
+
+        <button type="submit" class="btn-primary">
+            Login
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="py-8 px-4">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <h1 class="text-3xl font-bold">Hello, {{ current_user.username }} 👋</h1>
+
+        <form method="POST" action="{{ url_for('notes.search_notes') }}" class="gap-5 my-4 text-lg">
+            <input type="text" name="query" value="{{ query }}" placeholder="Search notes by title or content..."
+                class="input-primary">
+
+            <button type="submit" hidden></button>
+        </form>
+        <!-- Add note form -->
+        <div class="mb-10">
+            <form method="POST" action="{{ url_for('notes.view_notes') }}"
+                class="bg-white rounded-xl shadow-sm border border-gray-200">
+                <div class="p-6 space-y-4">
+                    <input type="text" name="title" placeholder="Add note title" class="input-primary" required />
+                    <textarea name="content" placeholder="Write your note here..." class="input-primary"></textarea>
+                    <button type="submit" class="btn-primary">
+                        Add Note
+                    </button>
+                </div>
+            </form>
+        </div>
+        <h1 class="text-3xl font-bold">Your Notes</h1>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-4">
+            {% for note in notes %}
+            <div
+                class="bg-white rounded-xl border shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden group">
+                <div class="p-6">
+                    <h2 class="text-lg text-gray-900 font-bold title-font mb-2 ">{{ note.title }}</h2>
+                    <a href="{{ url_for('notes.edit_note', note_id=note.id) }}" class="text-blue-500">Edit</a>
+                    <form method="POST" action="{{ url_for('notes.delete_note', note_id=note.id) }}" class="p-4 inline">
+                        <button type="submit" class="text-red-500">Delete</button>
+                    </form>
+                    <p class="leading-relaxed text-base mt-4 line-clamp-3">{{ note.content }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

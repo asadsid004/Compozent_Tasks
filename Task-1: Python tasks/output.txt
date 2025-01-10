@@ -1,0 +1,1 @@
+The file 'input.txt' contains 5 words.

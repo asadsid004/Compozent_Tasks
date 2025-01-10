@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 class="text-3xl font-bold p-5 text-center mt-20">Add Note</h1>
+<form method="POST" action="{{ url_for('notes.add_note') }}" class="max-w-sm mx-auto ">
+    <input type="text" name="title" id="title" class="input-primary" placeholder="Note title" required>
+    <textarea name="content" placeholder="Write your note here..." class=" mt-5 input-primary" required></textarea>
+    <br />
+    <button type="submit" class="btn-primary">Add Note</button>
+</form>
+{% endblock %}

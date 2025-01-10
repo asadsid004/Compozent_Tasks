@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../../static/css/output.css">
+    <title>{% block title %}Notespace{% endblock %}</title>
+</head>
+
+<body>
+    <div
+        class="absolute top-0 z-[-2] h-screen w-screen bg-white bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]">
+    </div>
+    <div class="min-h-screen">
+        <nav class="flex justify-between items-center p-4 bg-white shadow-sm">
+            <a href="/">
+                <div class="flex items-center gap-2">
+                    <div
+                        class="w-10 h-10 bg-black rounded-xl flex items-center justify-center text-white text-2xl font-extrabold">
+                        N
+                    </div>
+                    <span class="font-bold text-2xl">Notespace</span>
+                </div>
+            </a>
+            <div class="flex gap-4">
+                <a href="/tasks">
+                    <button class="px-4 py-2 text-gray-600 hover:text-gray-800 text-lg">Tasks</button>
+                </a>
+                <a href="/notes">
+                    <button class="px-4 py-2 text-gray-600 hover:text-gray-800 text-lg">Notes</button>
+                </a>
+                <a href="/logout">
+                    <button class="btn-primary">
+                        Logout
+                    </button>
+                </a>
+            </div>
+        </nav>
+        <div class="py-8 px-4">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h1 class="text-3xl font-bold">Edit Note</h1>
+                <!-- Add note form -->
+                <div class="mt-5 mb-10">
+                    <form method="POST" action="{{ url_for('notes.edit_note', note_id=note.id) }}"
+                        class="bg-white rounded-xl shadow-sm border border-gray-200">
+                        <div class="p-6 space-y-4">
+                            <input type="text" name="title" placeholder="Add note title" class="input-primary" required
+                                value="{{ note.title }}" />
+                            <textarea name="content" placeholder="Write your note here..."
+                                class="input-primary">{{ note.content }}</textarea>
+                            <button type="submit" class="btn-primary">
+                                Save Note
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
