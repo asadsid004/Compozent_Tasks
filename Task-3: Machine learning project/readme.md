@@ -3,7 +3,7 @@
 The Flight Price Prediction Model is designed to predict the price of a flight based on a variety of factors such as departure and arrival locations, dates, airline, and other relevant variables. This is a regression model which uses Random Forest Regressor
 
 Data source: [Kaggle](https://www.kaggle.com/datasets/shubhambathwal/flight-price-prediction)
-(Download the main cleaned_dataset.csv)
+(Download clean_dataset.csv)
 
 ## Requirements
 
