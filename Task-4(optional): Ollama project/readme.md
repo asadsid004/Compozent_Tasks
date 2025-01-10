@@ -29,7 +29,7 @@ This project converts PDF documents into flashcards using Llama 3.2 via Ollama. 
    flask run
    ```
 
-4. Access the side on http://localhost:5000
+4. Access the site on http://localhost:5000
 
 ## Output
 
